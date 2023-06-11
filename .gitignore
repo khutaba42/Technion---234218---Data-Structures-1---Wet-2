@@ -19,7 +19,7 @@ info.plist
 # Executables
 *.exe
 *.out
-!example_test0.out
+!example_test.out
 # Build files
 build/
 dist/
