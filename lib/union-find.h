@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <stdexcept>
 
 /**
  * simple union-find (the 4th implementation) find+union log* amortized.
@@ -16,7 +17,7 @@ class UnionFind
     //typedef int /*_group*/ int;
     //typedef int /*_element*/ int;
 public:
-    UnionFind(int N);
+    UnionFind(int N = 0);
     ~UnionFind();
 
     // 
@@ -144,8 +145,16 @@ UnionFind::UnionFind(int N) : __size_of_array(N),
                               __sizes_array(nullptr),
                               __parents_array(nullptr)
 {
+    if (N < 0)
+    {
+        throw std::invalid_argument("N < 0 in Union-Find.");
+    }
     __sizes_array = new int[N + 1]();
     __parents_array = new int[N + 1]();
+    for (int i = 1; i <= N; i++)
+    {
+        make_set(i);
+    }
 }
 
 UnionFind::~UnionFind()
