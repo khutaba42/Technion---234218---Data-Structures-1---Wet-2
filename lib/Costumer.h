@@ -59,6 +59,11 @@ public:
     {
         return __id < other.__id;
     }
+
+    int operator%(int n) const
+    {
+        return __id % n;
+    }
 };
 
 #endif
