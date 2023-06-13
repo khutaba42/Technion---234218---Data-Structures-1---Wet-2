@@ -31,16 +31,15 @@ private:
 
         for (int bucket = 0; bucket < __table.capacity(); bucket++)
         {
-            /**
-             * in order......
-             * we should insert the enter all old buckets into the new table
-             */
+            __table[bucket].in_order_traversal(newTable.insert); ////////////////////////////////////////////////////////////////////
         }
+
+        Table<AVLTree<DATA_t>>::swap_tables_contents(__table, newTable);
     }
 
     AVLTree<DATA_t> &getBucket(const DATA_t &value)
     {
-        return __table[value % __table.capacity()];
+        return __table[(*value) % __table.capacity()];
     }
 
 public:
@@ -49,11 +48,11 @@ public:
 
     void insert(const DATA_t &value)
     {
-        AVLTree<DATA_t> bucket = getBucket(value);
-        if (bucket == nullptr)
-            __size++;
-        
+        AVLTree<DATA_t>& bucket = getBucket(value);
+
         bucket.insert(value);
+
+        __size++
         // Rehash if the load factor exceeds 1
         if (static_cast<double>(size) / __table.capacity() > 1.0)
             rehash(__table.capacity() * 2);

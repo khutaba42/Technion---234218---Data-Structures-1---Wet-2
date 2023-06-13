@@ -7,7 +7,7 @@ template <typename DATA_t>
 class Table
 {
 public:
-    Table(int capacity = 0);
+    Table(int capacity = 1);
     ~Table();
 
     inline int capacity() const { return __capacity; }
