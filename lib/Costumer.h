@@ -12,7 +12,7 @@ private:
     double __debt;
     
 public:
-    Costumer(int id, int phone) : __id(id),
+    Costumer(int id, int phone = 0) : __id(id),
                                   __phone(phone),
                                   __isMember(false),
                                   __debt(0)
@@ -29,6 +29,14 @@ public:
         return true;
     }
 
+    bool isMember() const{
+        return __isMember;
+    }
+
+    int getPhone() const{
+        return __phone;
+    }
+
     void buy(Record& record)
     {
         __debt += record.purchases();
@@ -40,7 +48,7 @@ public:
         __debt -= amount;
     }
 
-    int getExpenses() const
+    double getExpenses() const
     {
         return __debt;
     }
