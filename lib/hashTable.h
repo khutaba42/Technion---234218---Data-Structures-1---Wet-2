@@ -2,30 +2,75 @@
 #define _HASH_TABLE_H_
 
 #include "AVLTree.h"
+#include "Table.h"
+/*template <typename DATA_t>
+class hashFunction
+{
+private:
+    int __n;
 
-template<typename T>
+public:
+    hashFunction(int n) : __n(n) {}
+
+    int operator()(const DATA_t &value) const
+    {
+        return value % __n;
+    }
+};*/
+
+template <typename DATA_t>
 class hashTable
 {
 private:
-    AVLTree<T> __buckets[];
+    Table<AVLTree<DATA_t>> __table;
     int __size;
 
     void rehash(int newSize)
     {
+        Table<AVLTree<DATA_t>> newTable(newSize);
 
+        for (int bucket = 0; bucket < __table.capacity(); bucket++)
+        {
+            /**
+             * in order......
+             * we should insert the enter all old buckets into the new table
+             */
+        }
     }
 
-    AVLTree<T>& getBucket(const T& value)
+    AVLTree<DATA_t> &getBucket(const DATA_t &value)
     {
-
+        return __table[value % __table.capacity()];
     }
+
 public:
-    hashTable();
-    ~hashTable();
+    hashTable() : __size(0) {}
+    ~hashTable() = default;
+
+    void insert(const DATA_t &value)
+    {
+        AVLTree<DATA_t> bucket = getBucket(value);
+        if (bucket == nullptr)
+            __size++;
+        
+        bucket.insert(value);
+        // Rehash if the load factor exceeds 1
+        if (static_cast<double>(size) / __table.capacity() > 1.0)
+            rehash(__table.capacity() * 2);
+    }
+
+    DATA_t& find(const DATA_t& value)
+    {
+        return getBucket(value).find(value);
+    }
+    
+    const DATA_t& find(const DATA_t& value) const 
+    {
+        return getBucket(value).find(value);
+    }
 };
 
-
-//chatgpt basic implementation
+// chatgpt basic implementation
 /*
 template <typename Key, typename Value, typename Hash = std::hash<Key>>
 class HashTable {
@@ -67,18 +112,6 @@ public:
         // Rehash if the load factor exceeds 1
         if (static_cast<double>(size) / buckets.size() > 1.0)
             rehash(buckets.size() * 2);
-    }
-
-    void remove(const Key& key) {
-        AVLTree<Key, Value>& bucket = getBucket(key);
-        if (bucket.find(key) != nullptr) {
-            --size;
-            bucket.remove(key);
-
-            // Rehash if the load factor becomes less than 0.25
-            if (static_cast<double>(size) / buckets.size() < 0.25)
-                rehash(buckets.size() / 2);
-        }
     }
 
     Value* find(const Key& key) {
