@@ -39,7 +39,8 @@ public:
 
     void buy(Record& record)
     {
-        __debt += record.purchases();
+        if(__isMember)
+            __debt += record.purchases() + 100;
         record.buy();
     }
     
