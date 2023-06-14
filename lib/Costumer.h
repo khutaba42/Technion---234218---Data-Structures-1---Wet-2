@@ -72,6 +72,11 @@ public:
     {
         return __id % n;
     }
+
+    static void resetCostumer(Costumer& costumer)
+    {
+        costumer.__debt = 0;
+    }
 };
 
 #endif
