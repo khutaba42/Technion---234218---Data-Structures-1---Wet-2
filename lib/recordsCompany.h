@@ -22,7 +22,8 @@ class RecordsCompany {
     hashTable<std::shared_ptr<Costumer>> __costumers;
 
     // holds all the records that are in the records company
-    //UnionFind __records;
+    UnionFind __Union_records;
+    Record *__records;
 
     // we need a deafult c'tor for union find, or something idk.
 
