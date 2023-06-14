@@ -142,6 +142,7 @@ StatusType RecordsCompany::buyRecord(int c_id, int r_id)
         return StatusType::INVALID_INPUT;
     try
     {
+        // this is wrong, i think that the debt should be only in the avl tree or something idk
         std::shared_ptr<Costumer> costumer = __costumers.find(std::shared_ptr<Costumer>(new Costumer(c_id)));
         costumer->buy(__records[r_id]);
     }
