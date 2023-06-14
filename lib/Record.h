@@ -8,7 +8,7 @@ private:
     int __purchases;
 
 public:
-    Record(int id) : __id(id),
+    Record(int id = 0) : __id(id),
                      __purchases(0)
     {
     }
