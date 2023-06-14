@@ -5,6 +5,8 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "ourUtilityFunctions.h"
+
 /**
  * simple union-find (the 4th implementation) find+union log* amortized.
  * the first element in the array (element at index 0) is not used for the sake of simplicity
@@ -160,6 +162,16 @@ public:
             }
         }
         return true;
+    }
+
+    static void swap_unions(UnionFind &first, UnionFind &second)
+    {
+        our::swap(first.__size_of_array, second.__size_of_array);
+        our::swap(first.__sizes_array, second.__sizes_array);
+        our::swap(first.__parents_array, second.__parents_array);
+        our::swap(first.__rel_heights_of_boxes, second.__rel_heights_of_boxes);
+        our::swap(first.__real_height_of_towers, second.__real_height_of_towers);
+
     }
 };
 
