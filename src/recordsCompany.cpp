@@ -24,6 +24,20 @@ StatusType RecordsCompany::newMonth(int *records_stocks, int number_of_records)
         return StatusType::INVALID_INPUT;
     try
     {
+        UnionFind newUnion(number_of_records);
+        delete [] __records;
+        __records = new Record[number_of_records];
+        for(int i = 1; i <= number_of_records; i++)
+        {
+            newUnion.make_set(i);
+            __records[i - 1] = Record(i - 1);
+        }
+        UnionFind::swap_unions(__Union_records, newUnion);
+        __members.in_order_traversal(Costumer::resetCostumer);
+
+        // we need to reset the prizes idk how for now.......
+
+
     }
     catch (const std::bad_alloc &)
     {
@@ -128,9 +142,12 @@ StatusType RecordsCompany::buyRecord(int c_id, int r_id)
         return StatusType::INVALID_INPUT;
     try
     {
+        std::shared_ptr<Costumer> costumer = __costumers.find(std::shared_ptr<Costumer>(new Costumer(c_id)));
+        costumer->buy(__records[r_id]);
     }
     catch (...)
     {
+        return StatusType::DOESNT_EXISTS;
     }
     return StatusType::SUCCESS;
 }
