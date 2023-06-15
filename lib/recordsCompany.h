@@ -3,12 +3,12 @@
 
 #include "utilesWet2.h"
 
-#include "AVLTree2.h"
+#include "RankTree.h"
 #include "hashTable.h"
 #include "union-find.h"
 
 #include "Costumer.h"
-#include "Record.h"
+#include "RecordKeeper.h"
 
 #include <memory>
 
@@ -16,14 +16,14 @@
 class RecordsCompany {
   private:
     // holds the members of the records company
-    AVLTree2<std::shared_ptr<Costumer>> __members;
+    RankTree<std::shared_ptr<Costumer>> __members;
 
     // holds all the costumers of the records company
     hashTable<std::shared_ptr<Costumer>> __costumers;
 
     // holds all the records that are in the records company
     UnionFind __Union_records;
-    Record *__records;
+    RecordKeeper __records;
 
     // we need a deafult c'tor for union find, or something idk.
 
