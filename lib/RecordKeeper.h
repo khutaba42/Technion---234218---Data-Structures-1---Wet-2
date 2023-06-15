@@ -4,7 +4,7 @@
 /**
  * for Testing purposes, comment out
  */
-//#define R_K_TESTING
+// #define R_K_TESTING
 /***/
 
 #ifdef R_K_TESTING
@@ -129,10 +129,10 @@ RecordKeeper::RecordKeeper(int *records_stock, int number_of_records)
     }
     if (number_of_records > 0)
     {
-        __records_arr = static_cast<Record*>(::operator new(sizeof(Record) * number_of_records));
+        __records_arr = static_cast<Record *>(::operator new(sizeof(Record) * number_of_records));
         for (int r_id = 0; r_id < number_of_records; ++r_id)
         {
-            new ((void*)(__records_arr + r_id)) Record(r_id);
+            new ((void *)(__records_arr + r_id)) Record(r_id);
         }
 
         // allocate the rest of the arrays and initialize them to 0
@@ -194,7 +194,11 @@ Record &RecordKeeper::operator[](int identifier)
 
 const Record &RecordKeeper::operator[](int identifier) const
 {
-    return this->operator[](identifier);
+    if (identifier < 0 || identifier >= get_size())
+    {
+        throw std::invalid_argument("r_id doesn't exist (in RecordKeeper).");
+    }
+    return __records_arr[identifier];
 }
 
 StatusType RecordKeeper::putOnTop(int r_id1, int r_id2)
