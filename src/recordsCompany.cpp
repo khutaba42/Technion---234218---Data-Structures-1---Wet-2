@@ -36,6 +36,10 @@ StatusType RecordsCompany::newMonth(int *records_stocks, int number_of_records)
         }
         UnionFind::swap_unions(__Union_records, newUnion);
         */
+
+        // reset the records
+        __records_ptr.reset(new RecordKeeper(records_stocks, number_of_records));
+
         __members.restartPrizesAmounts();
     }
     catch (const std::bad_alloc &)
@@ -144,7 +148,7 @@ StatusType RecordsCompany::buyRecord(int c_id, int r_id)
         std::shared_ptr<Costumer> costumer = __costumers.find(std::shared_ptr<Costumer>(new Costumer(c_id)));
         costumer->buy(__records[r_id]);
     }
-    catch (const RankTree<std::shared_ptr<Costumer>>::NoSuchElementException&) //there is no such member
+    catch (const RankTree<std::shared_ptr<Costumer>>::NoSuchElementException &) // there is no such member
     {
         return StatusType::SUCCESS;
     }
@@ -193,15 +197,7 @@ Output_t<double> RecordsCompany::getExpenses(int c_id)
  */
 StatusType RecordsCompany::putOnTop(int r_id1, int r_id2)
 {
-    if (r_id1 < 0 || r_id2 < 0)
-        return StatusType::INVALID_INPUT;
-    try
-    {
-    }
-    catch (...)
-    {
-    }
-    return StatusType::SUCCESS;
+    return __records_ptr->putOnTop(r_id1, r_id2);
 }
 
 /**
@@ -209,4 +205,5 @@ StatusType RecordsCompany::putOnTop(int r_id1, int r_id2)
  */
 StatusType RecordsCompany::getPlace(int r_id, int *column, int *hight)
 {
+    return __records_ptr->getPlace(r_id, column, hight);
 }

@@ -26,6 +26,9 @@ class RecordsCompany {
     UnionFind __Union_records;
     RecordKeeper __records;
 
+    // more like, we use unique_ptr so that the default c'tor is nullptr
+    std::unique_ptr<RecordKeeper> __records_ptr;
+
     // we need a deafult c'tor for union find, or something idk.
 
   public:
