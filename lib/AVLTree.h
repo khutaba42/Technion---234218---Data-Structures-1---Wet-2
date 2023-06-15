@@ -127,6 +127,8 @@ public:
         reverse_in_order_traversal_aux_recursive(__root, do_something);
     }
 
+    static void insert_inorder()
+
     void display();
 
     // error classes
