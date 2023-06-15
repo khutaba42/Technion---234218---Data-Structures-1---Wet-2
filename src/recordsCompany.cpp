@@ -163,7 +163,7 @@ StatusType RecordsCompany::addPrize(int c_id1, int c_id2, double amount)
     if (c_id1 < 0 || c_id2 < c_id1 || amount <= 0)
         return StatusType::INVALID_INPUT;
 
-    __members.addPrize(c_id1, c_id2, amount);
+    __members.addPrize(std::shared_ptr<Costumer>(new Costumer(c_id1)), std::shared_ptr<Costumer>(new Costumer(c_id2)), amount);
 
     return StatusType::SUCCESS;
 }

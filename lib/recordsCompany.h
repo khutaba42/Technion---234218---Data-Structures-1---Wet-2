@@ -9,6 +9,7 @@
 
 #include "Costumer.h"
 #include "RecordKeeper.h"
+#include "CompareFunctions.h"
 
 #include <memory>
 
@@ -16,10 +17,10 @@
 class RecordsCompany {
   private:
     // holds the members of the records company
-    RankTree<std::shared_ptr<Costumer>> __members;
+    RankTree<std::shared_ptr<Costumer>, Compare_shared_ptr_to_costumers_by_ID> __members;
 
     // holds all the costumers of the records company
-    hashTable<std::shared_ptr<Costumer>> __costumers;
+    hashTable<std::shared_ptr<Costumer>, Compare_shared_ptr_to_costumers_by_ID > __costumers;
 
     // holds all the records that are in the records company
     UnionFind __Union_records;

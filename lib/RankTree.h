@@ -7,15 +7,9 @@
 
 #include <cassert>
 
-enum class Comparison
-{
-    less = 0,
-    equal = 1,
-    greater = 2
-};
 
 template <typename T>
-inline Comparison AVLTree_CompareUsingOperators(const T &left, const T &right)
+inline Comparison RankTree_CompareUsingOperators(const T &left, const T &right)
 {
     if (left < right)
         return Comparison::less;
@@ -25,7 +19,7 @@ inline Comparison AVLTree_CompareUsingOperators(const T &left, const T &right)
         return Comparison::equal;
 }
 
-template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &) = AVLTree_CompareUsingOperators<DATA_t>>
+template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &) = RankTree_CompareUsingOperators<DATA_t>>
 class RankTree
 {
 public:
@@ -136,7 +130,7 @@ public:
     const DATA_t &getMin() const;
     const DATA_t &getMax() const;
 
-    int getPrizesAmount(const DATA_t &data) const
+    int getPrizesAmount(DATA_t data)
     {   
         Stack<Node *&> path;
         find_path(data, path);
@@ -167,11 +161,11 @@ public:
     }
 
     void display();
-
-    void addPrize(int i, int j, int prize)
+    ///////////////////////////////////////////////////////////////////////////////////
+    void addPrize(DATA_t data1, DATA_t data2, int prize)
     {
-        addPrize_aux(j, prize);
-        addPrize_aux(i - 1, -prize);
+        addPrize_aux(data2, prize);
+        addPrize_aux(data1, -prize);
     }
 
     // error classes
@@ -218,13 +212,13 @@ private:
         return size;
     }
 
-    void addPrize_aux(int i, int prize)
+    void addPrize_aux(DATA_t data, int prize)
     {
         Node* temp = __root;
         int right_turns = 0;
         while(!__root->isLeaf())
         {
-            if(temp->__data < i)
+            if(temp->__data < data)
             {
                 if(right_turns == 0)
                 {
@@ -233,7 +227,7 @@ private:
                 }
                 temp = temp->__right;
             }
-            else if(temp->__data > i)
+            else if(temp->__data > data)
             {
                 if(right_turns != 0)
                 {
@@ -242,13 +236,13 @@ private:
                 right_turns = 0;
                 temp = temp->__left;
             }
-            else // if(temp->__data == i)
+            else // if(temp->__data == data)
             {
                 if(right_turns != 0)
                 {
                     temp->__amount += prize;
                 }
-                if(temp->hasright())
+                if(temp->hasRight())
                 {
                     temp = temp->__right;
                     temp->__amount -= prize;

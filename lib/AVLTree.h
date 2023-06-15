@@ -7,13 +7,6 @@
 
 #include <cassert>
 
-enum class Comparison
-{
-    less = 0,
-    equal = 1,
-    greater = 2
-};
-
 template <typename T>
 inline Comparison AVLTree_CompareUsingOperators(const T &left, const T &right)
 {

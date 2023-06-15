@@ -2,6 +2,13 @@
 #define _OUR_UTILITY_FUNCTIONS_H_
 
 // our implementation of some simple functions
+
+enum class Comparison
+{
+    less = 0,
+    equal = 1,
+    greater = 2
+};
 namespace our
 {
 

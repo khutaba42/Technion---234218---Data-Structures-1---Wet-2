@@ -18,11 +18,11 @@ public:
     }
 };*/
 
-template <typename DATA_t>
+template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &) = AVLTree_CompareUsingOperators<DATA_t>>
 class hashTable
 {
 private:
-    Table<AVLTree<DATA_t>> __table;
+    Table<AVLTree<DATA_t, compFunction>> __table;
     int __size;
 
     void rehash(int newSize)

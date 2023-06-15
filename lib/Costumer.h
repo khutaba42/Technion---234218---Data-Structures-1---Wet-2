@@ -63,7 +63,6 @@ public:
     {
         return __id > other.__id;
     }
-
     bool operator<(const Costumer &other) const
     {
         return __id < other.__id;
@@ -73,6 +72,23 @@ public:
     {
         return __id % n;
     }
+    
+    ///////////////////////////////////////////////////////////////////
+    friend bool operator==(const Costumer &costumer, int n)
+    {
+        return costumer.__id == n;
+    }
+
+    friend bool operator>(const Costumer &costumer, int n)
+    {
+        return costumer.__id > n;
+    }
+
+    friend bool operator<(const Costumer &costumer, int n)
+    {
+        return costumer.__id < n;
+    }
+
 
     static void resetCostumer(Costumer& costumer)
     {
