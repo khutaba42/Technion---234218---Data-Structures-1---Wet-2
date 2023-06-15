@@ -23,9 +23,6 @@ class RecordsCompany {
     hashTable<std::shared_ptr<Costumer>, Compare_shared_ptr_to_costumers_by_ID > __costumers;
 
     // holds all the records that are in the records company
-    UnionFind __Union_records;
-    RecordKeeper __records;
-
     // more like, we use unique_ptr so that the default c'tor is nullptr
     std::unique_ptr<RecordKeeper> __records_ptr;
 

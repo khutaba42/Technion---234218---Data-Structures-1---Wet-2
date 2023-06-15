@@ -146,7 +146,7 @@ StatusType RecordsCompany::buyRecord(int c_id, int r_id)
     try
     {
         std::shared_ptr<Costumer> costumer = __costumers.find(std::shared_ptr<Costumer>(new Costumer(c_id)));
-        costumer->buy(__records[r_id]);
+        costumer->buy((*__records_ptr)[r_id]);
     }
     catch (const RankTree<std::shared_ptr<Costumer>>::NoSuchElementException &) // there is no such member
     {
