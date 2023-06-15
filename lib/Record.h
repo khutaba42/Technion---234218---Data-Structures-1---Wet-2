@@ -9,11 +9,16 @@ private:
 
 public:
     Record(int id = 0) : __id(id),
-                     __purchases(0)
+                         __purchases(0)
     {
     }
 
     ~Record() = default;
+
+    int get_id() const
+    {
+        return __id;
+    }
 
     void buy()
     {
@@ -25,7 +30,7 @@ public:
         return __purchases;
     }
 
-    bool operator=(const Record &other) const
+    bool operator==(const Record &other) const
     {
         return __id == other.__id;
     }

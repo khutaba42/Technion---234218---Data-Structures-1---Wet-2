@@ -54,7 +54,7 @@ public:
         return __debt;
     }
 
-    bool operator=(const Costumer &other) const
+    bool operator==(const Costumer &other) const
     {
         return __id == other.__id;
     }
