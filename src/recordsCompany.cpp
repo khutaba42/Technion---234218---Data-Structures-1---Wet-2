@@ -24,22 +24,7 @@ StatusType RecordsCompany::newMonth(int *records_stocks, int number_of_records)
         return StatusType::INVALID_INPUT;
     try
     {
-        /*
-        UnionFind newUnion(number_of_records);
-        __records.~RecordKeeper();
-        RecordKeeper newRecords(records_stocks, number_of_records);
-        __records = newRecords;
-        for(int i = 1; i <= number_of_records; i++)
-        {
-            newUnion.make_set(i);
-            __records[i - 1] = Record(i - 1);
-        }
-        UnionFind::swap_unions(__Union_records, newUnion);
-        */
-
-        // reset the records
         __records_ptr.reset(new RecordKeeper(records_stocks, number_of_records));
-
         __members.restartPrizesAmounts();
     }
     catch (const std::bad_alloc &)

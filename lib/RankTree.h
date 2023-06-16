@@ -110,6 +110,7 @@ public:
         static void resatrtAmount(Node *node)
         {
             node->__amount = 0;
+            node->__data->resetData();
         }
     };
 

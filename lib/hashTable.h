@@ -3,20 +3,21 @@
 
 #include "AVLTree.h"
 #include "Table.h"
-/*template <typename DATA_t>
-class hashFunction
+template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &) = RankTree_CompareUsingOperators<DATA_t>>
+class Rehash
 {
 private:
-    int __n;
+    Table<AVLTree<DATA_t, compFunction>> __table;
 
 public:
-    hashFunction(int n) : __n(n) {}
 
-    int operator()(const DATA_t &value) const
+    Rehash(Table<AVLTree<DATA_t, compFunction>>& table) : __table(table) {}
+
+    int operator()(const DATA_t &value)
     {
-        return value % __n;
+        __table[(*value) % __table.capacity()].insert(value);
     }
-};*/
+};
 
 template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &) = RankTree_CompareUsingOperators<DATA_t>>
 class hashTable
@@ -28,13 +29,13 @@ private:
     void rehash(int newSize)
     {
         Table<AVLTree<DATA_t, compFunction>> newTable(newSize);
-
+        Rehash<DATA_t, compFunction> rehash_helper(newTable);
         for (int bucket = 0; bucket < __table.capacity(); bucket++)
         {
-            __table[bucket].in_order_traversal(newTable[bucket].insert); ////////////////////////////////////////////////////////////////////
+            __table[bucket].in_order_traversal(rehash_helper);
         }
 
-        Table<AVLTree<DATA_t>>::swap_tables_contents(__table, newTable);
+        Table<AVLTree<DATA_t, compFunction>>::swap_tables_contents(__table, newTable);
     }
 
     AVLTree<DATA_t, compFunction> &getBucket(const DATA_t &value)
@@ -52,9 +53,9 @@ public:
 
         bucket.insert(value);
 
-        __size++
+        __size++;
         // Rehash if the load factor exceeds 1
-        if (static_cast<double>(size) / __table.capacity() > 1.0)
+        if (static_cast<double>(__size) / __table.capacity() > 1.0)
             rehash(__table.capacity() * 2);
     }
 

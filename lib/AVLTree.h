@@ -127,10 +127,6 @@ public:
         reverse_in_order_traversal_aux_recursive(__root, do_something);
     }
 
-    static void insert_inorder()
-
-    void display();
-
     // error classes
     class NoSuchElementException : public std::exception
     {
@@ -164,6 +160,7 @@ private:
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 
     // deletes the tree with a pointer to the root, return teh size of tree it deleted
+
     int clear_aux(Node *root)
     {
         if (root == nullptr)
@@ -571,17 +568,6 @@ const DATA_t &AVLTree<DATA_t, compFunction>::getMax() const
         throw NoSuchElementException();
     }
     return findMax()->__data;
-}
-
-template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &)>
-void AVLTree<DATA_t, compFunction>::display()
-{
-    std::cout << "\n";
-    if (!isEmpty())
-        display(__root);
-    else
-        std::cout << "Empty";
-    std::cout << "\n";
 }
 
 #endif // _AVL_TREE_H_

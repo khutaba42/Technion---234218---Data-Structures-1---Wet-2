@@ -90,9 +90,9 @@ public:
     }
 
 
-    static void resetCostumer(Costumer& costumer)
+    void resetData()
     {
-        costumer.__debt = 0;
+        __debt = 0;
     }
 };
 
