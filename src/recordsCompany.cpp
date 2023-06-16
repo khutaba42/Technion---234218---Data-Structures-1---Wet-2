@@ -177,7 +177,6 @@ Output_t<double> RecordsCompany::getExpenses(int c_id)
 }
 
 /**
- * I think the records should be union find
  * O(log*(m))
  */
 StatusType RecordsCompany::putOnTop(int r_id1, int r_id2)

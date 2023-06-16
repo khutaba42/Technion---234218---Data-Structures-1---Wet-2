@@ -2,7 +2,7 @@
 #define _AVL_TREE_STACK_H_
 
 #include <iostream>
-
+#include <stdexcept>
 template <typename T>
 class Stack
 {

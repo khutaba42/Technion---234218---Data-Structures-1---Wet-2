@@ -4,7 +4,7 @@
 
 #include <memory>
 #include "ourUtilityFunctions.h"
-#include "Costumer.h"
+#include "CostumerAndRecord.h"
 
 /**
  * Compare Functions for the Trees

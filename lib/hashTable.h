@@ -13,7 +13,7 @@ public:
 
     Rehash(Table<AVLTree<DATA_t, compFunction>>& table) : __table(table) {}
 
-    int operator()(const DATA_t &value)
+    void operator()(const DATA_t &value)
     {
         __table[(*value) % __table.capacity()].insert(value);
     }

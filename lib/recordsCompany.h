@@ -5,9 +5,8 @@
 
 #include "RankTree.h"
 #include "hashTable.h"
-#include "union-find.h"
 
-#include "Costumer.h"
+#include "CostumerAndRecord.h"
 #include "RecordKeeper.h"
 #include "CompareFunctions.h"
 
