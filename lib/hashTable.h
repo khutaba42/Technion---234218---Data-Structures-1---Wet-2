@@ -3,23 +3,23 @@
 
 #include "AVLTree.h"
 #include "Table.h"
-template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &) = RankTree_CompareUsingOperators<DATA_t>>
+template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &) = AVLTree_CompareUsingOperators<DATA_t>>
 class Rehash
 {
 private:
-    Table<AVLTree<DATA_t, compFunction>> __table;
+    Table<AVLTree<DATA_t, compFunction>>* __table;
 
 public:
 
-    Rehash(Table<AVLTree<DATA_t, compFunction>>& table) : __table(table) {}
+    Rehash(Table<AVLTree<DATA_t, compFunction>>* table) : __table(table) {}
 
     void operator()(const DATA_t &value)
     {
-        __table[(*value) % __table.capacity()].insert(value);
+        (*__table)[(*value) % __table->capacity()].insert(value);
     }
 };
 
-template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &) = RankTree_CompareUsingOperators<DATA_t>>
+template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &) = AVLTree_CompareUsingOperators<DATA_t>>
 class hashTable
 {
 private:
@@ -29,7 +29,7 @@ private:
     void rehash(int newSize)
     {
         Table<AVLTree<DATA_t, compFunction>> newTable(newSize);
-        Rehash<DATA_t, compFunction> rehash_helper(newTable);
+        Rehash<DATA_t, compFunction> rehash_helper(&newTable);
         for (int bucket = 0; bucket < __table.capacity(); bucket++)
         {
             __table[bucket].in_order_traversal(rehash_helper);

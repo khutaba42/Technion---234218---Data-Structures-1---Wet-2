@@ -76,6 +76,11 @@ public:
         return __isMember;
     }
 
+    int getID() const
+    {
+        return __id;
+    }
+
     int getPhone() const{
         return __phone;
     }

@@ -1,4 +1,4 @@
-#include "../lib/RecordKeeper.h"
+#include "lib/RecordKeeper.h"
 
 
 RecordKeeper::RecordKeeper(int *records_stock, int number_of_records)
@@ -69,6 +69,7 @@ RecordKeeper::~RecordKeeper()
     delete[] __union_find__column;
     delete[] __union_find__column_height;
     delete[] __union_find__relative_heights;
+    delete[] __records_stocks_arr;
 }
 
 Record &RecordKeeper::operator[](int identifier)

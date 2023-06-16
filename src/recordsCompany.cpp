@@ -1,4 +1,4 @@
-#include "../lib/recordsCompany.h"
+#include "lib/recordsCompany.h"
 
 /**
  * O(1)
@@ -86,10 +86,10 @@ StatusType RecordsCompany::makeMember(int c_id)
     try
     {
         std::shared_ptr<Costumer> costumer = __costumers.find(std::shared_ptr<Costumer>(new Costumer(c_id)));
-        if (!costumer->makeMember())
+        if (!costumer->makeMember())    
             return StatusType::ALREADY_EXISTS;
 
-        __members.insert(std::shared_ptr<Costumer>(new Costumer(*costumer)));
+        __members.insert(costumer);
     }
     catch (const std::bad_alloc &)
     {
@@ -168,10 +168,15 @@ Output_t<double> RecordsCompany::getExpenses(int c_id)
     try
     {
         std::shared_ptr<Costumer> member = __members.find(std::shared_ptr<Costumer>(new Costumer(c_id)));
+        printf("%s: %d\n", "      id", c_id);
+        printf("%s: %f\n", "Expenses", member->getExpenses());
+        printf("%s: %f\n", "   Prize", __members.getPrizesAmount(member));
+        printf("%s: %f\n", "    both", member->getExpenses() - __members.getPrizesAmount(member));
         return (member->getExpenses() - __members.getPrizesAmount(member));
     }
-    catch (...)
+    catch (const std::exception& e)
     {
+        //printf("%s\n", e.what());
         return StatusType::DOESNT_EXISTS;
     }
 }
