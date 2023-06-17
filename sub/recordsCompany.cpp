@@ -26,8 +26,6 @@ StatusType RecordsCompany::newMonth(int *records_stocks, int number_of_records)
     {
         __records_ptr.reset(new RecordKeeper(records_stocks, number_of_records));
         __members.restartPrizesAmounts();
-
-        //__members.display();
     }
     catch (const std::bad_alloc &)
     {
@@ -92,7 +90,6 @@ StatusType RecordsCompany::makeMember(int c_id)
             return StatusType::ALREADY_EXISTS;
 
         __members.insert(costumer);
-        //__members.display();
     }
     catch (const std::bad_alloc &)
     {
@@ -154,7 +151,6 @@ StatusType RecordsCompany::addPrize(int c_id1, int c_id2, double amount)
 {
     if (c_id1 < 0 || c_id2 < c_id1 || amount <= 0)
         return StatusType::INVALID_INPUT;
-    //__members.display();
     __members.addPrize(std::shared_ptr<Costumer>(new Costumer(c_id1 - 1)), std::shared_ptr<Costumer>(new Costumer(c_id2 - 1)), amount);
 
     return StatusType::SUCCESS;
@@ -171,16 +167,10 @@ Output_t<double> RecordsCompany::getExpenses(int c_id)
     try
     {
         std::shared_ptr<Costumer> member = __members.find(std::shared_ptr<Costumer>(new Costumer(c_id)));
-        //printf("%s: %d\n", "      id", c_id);
-        //printf("%s: %f\n", "Expenses", member->getExpenses());
-        //printf("%s: %f\n", "   Prize", __members.getPrizesAmount(member));
-        //printf("%s: %f\n", "    both", member->getExpenses() - __members.getPrizesAmount(member));
-        //__members.display();
         return (member->getExpenses() - __members.getPrizesAmount(member));
     }
-    catch (const std::exception& e)
+    catch (...)
     {
-        //printf("%s\n", e.what());
         return StatusType::DOESNT_EXISTS;
     }
 }
