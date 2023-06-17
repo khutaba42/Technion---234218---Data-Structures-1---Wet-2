@@ -1,4 +1,4 @@
-#include "../lib/recordsCompany.h"
+#include "recordsCompany.h"
 
 /**
  * O(1)

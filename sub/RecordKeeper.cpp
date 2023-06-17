@@ -1,4 +1,4 @@
-#include "../lib/RecordKeeper.h"
+#include "RecordKeeper.h"
 
 
 RecordKeeper::RecordKeeper(int *records_stock, int number_of_records)

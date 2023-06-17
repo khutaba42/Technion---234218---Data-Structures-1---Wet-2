@@ -1,5 +1,5 @@
-#ifndef _RANK_TREE_H_
-#define _RANK_TREE_H_
+#ifndef _AVL_TREE_H_
+#define _AVL_TREE_H_
 
 #include "stack.h"
 #include "ourUtilityFunctions.h"
@@ -8,7 +8,7 @@
 #include <cassert>
 
 template <typename T>
-inline Comparison RankTree_CompareUsingOperators(const T &left, const T &right)
+inline Comparison AVLTree_CompareUsingOperators(const T &left, const T &right)
 {
     if (left < right)
         return Comparison::less;
@@ -18,19 +18,17 @@ inline Comparison RankTree_CompareUsingOperators(const T &left, const T &right)
         return Comparison::equal;
 }
 
-template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &) = RankTree_CompareUsingOperators<DATA_t>>
-class RankTree
+template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &) = AVLTree_CompareUsingOperators<DATA_t>>
+class AVLTree
 {
 public:
     struct Node
     {
         DATA_t __data;
-        double __amount;
         Node *__left, *__right;
         int __height;
 
         Node(DATA_t data) : __data(data),
-                            __amount(0),
                             __left(nullptr),
                             __right(nullptr),
                             __height(0)
@@ -70,14 +68,6 @@ public:
             __right = __right->__left;
             R->__left = this;
 
-            int temp = R->__amount;
-            R->__amount += __amount;
-            __amount = -temp;
-            if(hasRight())
-            {
-                __right->__amount += temp;
-            }
-
             this->updateValues(); // the order is important
             R->updateValues();
 
@@ -90,14 +80,6 @@ public:
             Node *L = __left;
             __left = __left->__right;
             L->__right = this;
-
-            int temp = L->__amount;
-            L->__amount += __amount;
-            __amount = -temp;
-            if(hasLeft())
-            {
-                __left->__amount += temp;
-            }
 
             this->updateValues(); // the order is important
             L->updateValues();
@@ -116,16 +98,10 @@ public:
             our::swap(first->__height, second->__height); // switch heights
             our::swap(first, second);                     // switch places (parents in tree)
         }
-
-        static void restartAmount(Node *node)
-        {
-            node->__amount = 0;
-            node->__data->resetData();
-        }
     };
 
-    RankTree();
-    ~RankTree();
+    AVLTree();
+    ~AVLTree();
 
     void insert(DATA_t data);
     void remove(DATA_t data);
@@ -136,31 +112,19 @@ public:
 
     DATA_t &find(const DATA_t &data);
     const DATA_t &find(const DATA_t &data) const;
+    const DATA_t &getMin() const;
+    const DATA_t &getMax() const;
 
-    double getPrizesAmount(DATA_t data)
+    template <typename FunctionObject>
+    void in_order_traversal(FunctionObject do_something)
     {
-        Stack<Node *&> path;
-        find_path(data, path);
-        double amount = 0;
-        while (!path.isEmpty())
-        {
-            amount += path.back()->__amount;
-            path.pop_back();
-        }
-        return amount;
+        in_order_traversal_aux_recursive(__root, do_something);
     }
 
-    void restartPrizesAmounts()
+    template <typename FunctionObject>
+    void reverse_in_order_traversal(FunctionObject do_something)
     {
-        restartPrizesAmounts_aux(__root);
-    }
-
-    void display();
-    ///////////////////////////////////////////////////////////////////////////////////
-    void addPrize(DATA_t data1, DATA_t data2, double prize)
-    {
-        addPrize_aux(data2, prize);
-        addPrize_aux(data1, -prize);
+        reverse_in_order_traversal_aux_recursive(__root, do_something);
     }
 
     // error classes
@@ -177,6 +141,8 @@ public:
 
 private:
     Node *__root;
+    Node *__min_element;
+    Node *__max_element;
     int __size;
 
     /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -194,6 +160,7 @@ private:
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 
     // deletes the tree with a pointer to the root, return teh size of tree it deleted
+
     int clear_aux(Node *root)
     {
         if (root == nullptr)
@@ -205,40 +172,7 @@ private:
         return size;
     }
 
-    void addPrize_aux(DATA_t data, double prize)
-    {
-        Node *temp = __root;
-        int right_turns = 0, left_turns = 0;
-        while (temp != nullptr && compFunction(temp->__data, data) != Comparison::equal)
-        {
-            while (temp != nullptr && compFunction(temp->__data, data) == Comparison::less)
-            {
-                if (right_turns == 0)
-                {
-                    temp->__amount += prize;
-                }
-                right_turns++;
-                left_turns = 0;
-                temp = temp->__right;
-            }
-
-            while (temp != nullptr && compFunction(temp->__data, data) == Comparison::greater)
-            {
-                if (right_turns != 0)
-                {
-                    temp->__amount -= prize;
-                }
-                left_turns++;
-                right_turns = 0;
-                temp = temp->__left;
-            }
-        }
-        if(temp != nullptr && right_turns == 0)
-            temp->__amount += prize;
-        if(temp != nullptr && temp->hasRight())
-            temp->__right->__amount -= prize;
-    }
-
+    // return ????????
     Node **find_node(DATA_t data)
     {
         Node **temp = &__root;
@@ -289,12 +223,47 @@ private:
         return empty_path;
     }
 
+    // return a pointer the node holding the min data
+    Node *findMin() const
+    {
+        Node *temp = __root;
+        if (temp == nullptr)
+            throw NoSuchElementException();
+        while (temp->__left != nullptr)
+        {
+            temp = temp->__left;
+        }
+        return temp;
+    }
+
+    // return a pointer the node holding the max data
+    Node *findMax() const
+    {
+        Node *temp = __root;
+        if (temp == nullptr)
+            throw NoSuchElementException();
+        while (temp->__right != nullptr)
+        {
+            temp = temp->__right;
+        }
+        return temp;
+    }
+
     void balance(Stack<Node *&> &path)
     {
+        // std::cout << "brfore balancing\n";
+        // display();
         Node *curr = nullptr;
         while (!path.isEmpty())
         {
+            // display();
             curr = path.back();
+            // assert(curr != nullptr);
+            // if (curr == nullptr)
+            //{
+            //    path.pop_back();
+            //    continue;
+            //}
             if (curr == nullptr)
             {
 
@@ -327,6 +296,8 @@ private:
                 curr_reference = curr->left_rotate();
             }
         }
+        // std::cout << "after balancing\n";
+        // display();
     }
     /**
      * @return -    true if insertion is successful
@@ -341,17 +312,7 @@ private:
             return false;
         }
         path.back() = new Node(data); // beware of bad_alloc
-
-        Stack<Node *&> tempPath;
-        find_path(data, tempPath);
-        Node *node = tempPath.back();
-        while (!tempPath.isEmpty())
-        {
-            node->__amount -= tempPath.back()->__amount;
-            tempPath.pop_back();
-        }
-
-        path.pop_back(); // new inserted node dont need balancing
+        path.pop_back();              // new inserted node dont need balancing
         // balance path
         balance(path /*, true*/);
         return true;
@@ -404,9 +365,20 @@ private:
                 path.back() = (*successor);
                 delete toDelete;
             }
-
+            // successor DOESN'T have left by definition
+            // else if (path.back() == curr->__right)
+            //{
+            //    path.back()->__left = curr->__left;
+            //    path.back()->updateValues();
+            //    path[index_of_pointer_to_middle_node] = path.back();
+            //    delete curr;
+            //}
             else
             {
+                // our::swap(path[index_of_pointer_to_middle_node]->__left,    path.back()->__left);     // switch lefts
+                // our::swap(path[index_of_pointer_to_middle_node]->__right,   path.back()->__right);   // switch rights
+                // our::swap(path[index_of_pointer_to_middle_node]->__height,  path.back()->__height); // switch heights
+                // our::swap(path[index_of_pointer_to_middle_node],            path.back());
                 our::swap(path.back()->__data, path_to_successor.back()->__data);
                 if (path_to_successor.back()->isLeaf())
                 {
@@ -430,15 +402,30 @@ private:
         return true;
     }
 
-    void restartPrizesAmounts_aux(Node *const root) const
+    template <typename FunctionObject>
+    bool in_order_traversal_aux_recursive(Node *const root, FunctionObject do_something) const
     {
         if (root == nullptr)
         {
-            return;
+            return false;
         }
-        restartPrizesAmounts_aux(root->__left);
-        Node::restartAmount(root);
-        restartPrizesAmounts_aux(root->__right);
+        in_order_traversal_aux_recursive(root->__left, do_something);
+        do_something(root->__data);
+        in_order_traversal_aux_recursive(root->__right, do_something);
+        return true;
+    }
+
+    template <typename FunctionObject>
+    bool reverse_in_order_traversal_aux_recursive(Node *const root, FunctionObject do_something) const
+    {
+        if (root == nullptr)
+        {
+            return false;
+        }
+        reverse_in_order_traversal_aux_recursive(root->__right, do_something);
+        do_something(root->__data);
+        reverse_in_order_traversal_aux_recursive(root->__left, do_something);
+        return true;
     }
 
     void display(Node *cur, int depth = 0, int state = 0)
@@ -454,7 +441,7 @@ private:
         else if (state == 2) // right
             printf("└───");
 
-        std::cout << "[" << cur->__data->getID() << ",  " << cur->__amount << "]" << std::endl;
+        std::cout << "[" << cur->__data << ",  " << cur->__height << "]" << std::endl;
 
         if (cur->__right)
             display(cur->__right, depth + 1, 2);
@@ -473,53 +460,27 @@ private:
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
-
-    Node *find_common_father(const DATA_t &data1, const DATA_t &data2)
-    {
-        Comparison result = compFunction(data1, data2);
-        if (result == Comparison::greater)
-        {
-            return nullptr;
-        }
-        Node *temp = __root;
-        while (temp != nullptr)
-        {
-            Comparison result1 = compFunction(temp->__data, data1);
-            Comparison result2 = compFunction(data2, temp->__data);
-            if (result1 == Comparison::less) // else temp >= data1
-            {
-                temp = temp->__right;
-            }
-            else if (result2 == Comparison::less) // else data2 >= temp
-            {
-                temp = temp->__left;
-            }
-            else // data1 <= temp <= data2
-            {
-                break;
-            }
-        }
-        return temp;
-    }
 };
 
 template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &)>
-RankTree<DATA_t, compFunction>::RankTree() : __root(nullptr), __size(0)
+AVLTree<DATA_t, compFunction>::AVLTree() : __root(nullptr), __min_element(nullptr), __max_element(nullptr), __size(0)
 {
 }
 
 template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &)>
-RankTree<DATA_t, compFunction>::~RankTree()
+AVLTree<DATA_t, compFunction>::~AVLTree()
 {
     clear();
 }
 
 template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &)>
-void RankTree<DATA_t, compFunction>::insert(DATA_t data)
+void AVLTree<DATA_t, compFunction>::insert(DATA_t data)
 {
     if (insert_aux(data)) // insert successful
     {
         __size++;
+        __min_element = findMin();
+        __max_element = findMax();
     }
     else
     {
@@ -528,11 +489,21 @@ void RankTree<DATA_t, compFunction>::insert(DATA_t data)
 }
 
 template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &)>
-void RankTree<DATA_t, compFunction>::remove(DATA_t data)
+void AVLTree<DATA_t, compFunction>::remove(DATA_t data)
 {
     if (remove_aux(data)) // deletion successful
     {
         __size--;
+        if (isEmpty())
+        {
+            __min_element = nullptr;
+            __max_element = nullptr;
+        }
+        else
+        {
+            __min_element = findMin();
+            __max_element = findMax();
+        }
     }
     else
     {
@@ -541,26 +512,29 @@ void RankTree<DATA_t, compFunction>::remove(DATA_t data)
 }
 
 template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &)>
-void RankTree<DATA_t, compFunction>::clear()
+void AVLTree<DATA_t, compFunction>::clear()
 {
     __size -= clear_aux(__root);
+    assert(__size == 0);
     __root = nullptr;
+    __min_element = nullptr;
+    __max_element = nullptr;
 }
 
 template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &)>
-bool RankTree<DATA_t, compFunction>::isEmpty() const
+bool AVLTree<DATA_t, compFunction>::isEmpty() const
 {
     return (__root == nullptr);
 }
 
 template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &)>
-int RankTree<DATA_t, compFunction>::getSize() const
+int AVLTree<DATA_t, compFunction>::getSize() const
 {
     return __size;
 }
 
 template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &)>
-DATA_t &RankTree<DATA_t, compFunction>::find(const DATA_t &data)
+DATA_t &AVLTree<DATA_t, compFunction>::find(const DATA_t &data)
 {
     Node *temp = *find_node(data);
     if (temp == nullptr)
@@ -571,20 +545,29 @@ DATA_t &RankTree<DATA_t, compFunction>::find(const DATA_t &data)
 }
 
 template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &)>
-const DATA_t &RankTree<DATA_t, compFunction>::find(const DATA_t &data) const
+const DATA_t &AVLTree<DATA_t, compFunction>::find(const DATA_t &data) const
 {
     return find(data);
 }
 
 template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &)>
-void RankTree<DATA_t, compFunction>::display()
+const DATA_t &AVLTree<DATA_t, compFunction>::getMin() const
 {
-    std::cout << "\n";
-    if (!isEmpty())
-        display(__root);
-    else
-        std::cout << "Empty";
-    std::cout << "\n";
+    if (__root == nullptr)
+    {
+        throw NoSuchElementException();
+    }
+    return findMin()->__data;
+}
+
+template <typename DATA_t, Comparison (*compFunction)(const DATA_t &, const DATA_t &)>
+const DATA_t &AVLTree<DATA_t, compFunction>::getMax() const
+{
+    if (__root == nullptr)
+    {
+        throw NoSuchElementException();
+    }
+    return findMax()->__data;
 }
 
 #endif // _AVL_TREE_H_
