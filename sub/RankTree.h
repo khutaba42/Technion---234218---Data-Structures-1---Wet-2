@@ -208,7 +208,7 @@ private:
     void addPrize_aux(DATA_t data, double prize)
     {
         Node *temp = __root;
-        int right_turns = 0, left_turns = 0;
+        int right_turns = 0;
         while (temp != nullptr && compFunction(temp->__data, data) != Comparison::equal)
         {
             while (temp != nullptr && compFunction(temp->__data, data) == Comparison::less)
@@ -218,7 +218,6 @@ private:
                     temp->__amount += prize;
                 }
                 right_turns++;
-                left_turns = 0;
                 temp = temp->__right;
             }
 
@@ -228,7 +227,6 @@ private:
                 {
                     temp->__amount -= prize;
                 }
-                left_turns++;
                 right_turns = 0;
                 temp = temp->__left;
             }
